@@ -19,11 +19,16 @@ export default function App(){
     setEmail(inputEmail)
     setSenha(inputSenha)
 
-    if  (inputEmail === "giovani@gmail.com" && inputSenha === "123"){
-      router.push("/(tabs)/assentos")
-      return;
-    } else if (inputEmail === "motorista@gmail.com" && inputSenha === "123"){
-      
+    const emailBD = listBD
+    const senhaBD = listBD
+
+    if (listBD){
+      if(emailBD === inputEmail && senhaBD === inputSenha && ocupacao === 0){
+          router.push("/(tabs)/assentos")
+          return;
+        }
+        router.push("/(tabs)/assentos")
+        return;
     }
     alert("Erro")
     setInputEmail("")
