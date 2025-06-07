@@ -1,6 +1,8 @@
 import { useRouter } from "expo-router";
+import { get, ref } from "firebase/database";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { db } from "../../firebaseConfig";
 
 
 
@@ -14,26 +16,50 @@ export default function App(){
   const [inputSenha, setInputSenha] = useState("")
 
 
-  function login() {
+  async function login() {
+  setEmail(inputEmail);
+  setSenha(inputSenha);
 
-    setEmail(inputEmail)
-    setSenha(inputSenha)
+  try {
+    const refUsuario = ref(db, "usuarios"); 
+    const getUsuario = await get(refUsuario);
 
-    const emailBD = listBD
-    const senhaBD = listBD
+    if (getUsuario.exists()) {
+      let usuarioEncontrado = null;
 
-    if (listBD){
-      if(emailBD === inputEmail && senhaBD === inputSenha && ocupacao === 0){
-          router.push("/(tabs)/assentos")
-          return;
+      getUsuario.forEach((childSnapshot) => {
+        const usuario = childSnapshot.val();
+
+        if (usuario.email === inputEmail && usuario.senha === inputSenha) {
+          usuarioEncontrado = usuario;
         }
-        router.push("/(tabs)/assentos")
-        return;
+      });
+
+      if (usuarioEncontrado) {
+        console.log("Usuário autenticado:", usuarioEncontrado);
+
+        if (usuarioEncontrado.ocupacao === "1") {
+          router.push("/(tabs)/passageiros/assentos");
+        } else if (usuarioEncontrado.ocupacao === "0") {
+          router.push("/(tabs)/passageiros/assentos"); 
+        }
+      } else {
+        alert("Email ou senha inválidos");
+        setInputEmail("");
+        setInputSenha("");
+      }
+
+    } else {
+      alert('Usuário não encontrado');
+      setInputEmail("");
+      setInputSenha("");
     }
-    alert("Erro")
-    setInputEmail("")
-    setInputSenha("")
+
+  } catch (error) {
+    console.error("Erro: ", error);
   }
+}
+
 
   return (
     <View style={styles.container}>
@@ -82,4 +108,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
