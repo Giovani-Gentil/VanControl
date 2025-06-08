@@ -41,7 +41,7 @@ export default function App(){
         if (usuarioEncontrado.ocupacao === "1") {
           router.push("/(tabs)/passageiros/assentos");
         } else if (usuarioEncontrado.ocupacao === "0") {
-          router.push("/(tabs)/passageiros/assentos"); 
+          router.push("/(tabs)/motorista/assentos"); 
         }
       } else {
         alert("Email ou senha inválidos");
