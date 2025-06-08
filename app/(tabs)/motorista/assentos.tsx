@@ -1,17 +1,32 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function App(){
+export default function App() {
+  const [nome, setNome] = useState("");
 
-  return(
+  useEffect(() => {
+    const getNomeSalvo = async () => {
+      try {
+        const usuarioSalvo = await AsyncStorage.getItem("@app:usuario_logado");
+        if (usuarioSalvo !== null) {
+          const usuario = JSON.parse(usuarioSalvo);
+          setNome(usuario.nome); 
+        }
+      } catch (e) {
+        console.error("Erro ao recuperar usuário:", e);
+      }
+    };
+
+    getNomeSalvo();
+  }, []);
+
+  return (
     <View style={styles.container}>
-      
-      {/* titulos */}
+      {/* título */}
       <View style={styles.header}>
-        <Text>MOTORISTA</Text>
+        <Text>{nome ? `Olá, ${nome}` : "Carregando..."}</Text>
       </View>
-      
-     
     </View>
   );
 }
@@ -59,6 +74,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,   
     borderColor: "green",
-    margin: 10
-  },
+    margin: 10
+  },
 })
